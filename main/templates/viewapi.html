@@ -1,0 +1,316 @@
+<!doctype html>
+<html lang="en">
+<head>
+
+  <title>Simple APIs for Google Spreadsheets | {{config.SERVICE_NAME}}</title>
+  
+  <link rel="stylesheet" href="/static/css/main.css" />
+
+  <script type="text/javascript" src="//use.typekit.net/htc4dlo.js"></script>
+  <script type="text/javascript">try{Typekit.load();}catch(e){}</script>
+
+  <meta name="viewport" content="initial-scale=1">
+
+  <link rel="icon" type="image/png" href="{{config.SERVICE_URL}}/favicon.ico">
+
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+  <!-- <script src="/static/js/jquery.equalheights.min.js"></script>-->
+
+</head>
+<body> 
+  
+<script>
+var currentTab = 0; // Set to a diferent number to start on a different tab.
+var numTabs; // These two variables are set on document ready.
+var currentNav = 0;
+
+function openTab(clickedTab) {
+   var thisTab = $(".tabbed-box .tabs a").index(clickedTab);
+   $(".tabbed-box .tabs li a").removeClass("active");
+   $(".tabbed-box .tabs li a:eq("+thisTab+")").addClass("active");
+   $(".tabbed-box .tabbed-content").hide();
+   $(".tabbed-box .tabbed-content:eq("+thisTab+")").show();
+   currentTab = thisTab;
+}
+
+function doNav(clickedNav) {
+   var thisTab = $(".navtabs a").index(clickedNav);
+   $(".navtabs li").removeClass("active");
+   $(".navtabs li:eq("+thisTab+")").addClass("active");
+   $(".navtab-content").hide();
+   $(".navtab-content:eq("+thisTab+")").show();
+   currentNav = thisTab;
+}
+
+
+$(document).ready(function() {
+   // $(".tabbed-content").equalHeights();
+   numTabs = $(".tabbed-box .tabs li a").length;
+   $(".tabbed-box .tabs li a").click(function() { 
+      openTab($(this)); return false; 
+   });
+   $(".navtabs li a").click(function() { 
+      doNav($(this)); return false; 
+   });   
+  
+   $(".tabbed-box .tabs li a:eq("+currentTab+")").click()
+   $(".navtabs li a:eq("+currentNav+")").click()
+
+  $(".delss").click(function(ev) {
+    ev.preventDefault();
+    var row = $(this).parents("tr");
+    var apiroot = "{{config.API_ROOT}}";
+    var success = null;
+    var url = null;
+    if (row.length == 0) {
+      url = apiroot + "/" + "{{key}}";
+      success = function() {
+        document.location.href = "{{config.SERVICE_URL}}/admin";
+      };
+    } else {
+      url = apiroot + "/" + $(row).attr("id");
+      success = function() {
+        $(row[0]).hide();
+      };
+    }
+
+    if (confirm('Are you sure you want to remove this spreadsheet from {{config.SERVICE_NAME}}? This will not affect your content on Google. You can reconnect your spreadsheet at any time.')) {
+      $.ajax({
+        method: "DELETE",
+        url: url,
+        success: success
+      });
+    }
+  });
+
+
+});
+</script>
+
+  <div class="row section" id="header">
+      <div class="container center">
+          <h1 style="font-weight: 900;">{{title}}</h1>
+      </div>
+  </div>
+
+  {% if key %}
+
+  <div class="container block navtabs">
+    <div class="col-1-1">
+      <ul>
+        <li><a>Basic Info</a></li>
+        <li><a>API Reference</a></li>
+        <li><a>Data Preview</a></li>
+        <li><a>All Spreadsheets</a></li>
+      </ul>
+    </div>
+  </div>
+  {% else %}
+  <div class="container block">
+    <div class="col-1-1">
+    </div>
+  </div>
+  {% endif %}
+
+
+  {% if key %}
+  <div class="row section navtab-content" id="getstarted">
+      <div class="container block">
+            <div class="col-1-1">
+ 
+
+                <h3>To display your data:</h3>
+                <p>Customize this <a href="http://mustache.github.io/mustache.5.html">mustache</a> template code, and insert it into your HTML. This code uses your read key.</p>
+                <pre class="card" id="querycode" style="overflow-x:auto; white-space:pre; word-wrap:normal; font-size:smaller"></pre>
+                <br>
+
+                <h3>To post new data:</h3>
+                <p>Customize this form code, and insert it into your HTML. This code uses your write key.</p>
+                <pre class="card" id="postcode" style="overflow-x:auto; white-space:pre; word-wrap:normal; font-size:smaller"></pre>
+                <br>
+
+                <h3>Read and write keys:</h3>
+                <p>Your read key is: {{key}}</p>
+                <p>Your write key is: {{writekey}}</p>
+                <p>Generally you should only expose one of these keys in your HTML, and keep the other one secret. If you need to revoke access to this spreadsheet, you can <a href="" class="delss">delete these keys</a>.
+                <br><br>
+
+            </div>
+      </div>
+
+  </div>
+
+  <div class="row section navtab-content" id="getstarted">
+
+      <div class="container block">
+            <div class="col-1-1">
+                <h3>API reference (advanced):</h3>
+                <p>
+                  <div id="wrap">
+                     <div class="tabbed-box">
+                        <ul class="tabs">
+                           <li><a href="#">jQuery</a></li>
+                           <li><a href="#">curl</a></li>
+                        </ul>
+                        <div class="tabbed-content card">
+<pre style="overflow-x:auto; white-space:pre; word-wrap:normal">
+  /* To get your data: */
+  $.get("{{config.SERVICE_URL}}/ss/{{key|urlencode}}", 
+    function(data) {console.log(data)})
+
+  /* To add data: */
+  $.post("{{config.SERVICE_URL}}/ss/{{writekey|urlencode}}", {
+<span id="jqprms"></span>  }) 
+</pre>
+                        </div>
+                        <div class="tabbed-content card">
+<pre style="overflow-x:auto; white-space:pre; word-wrap:normal">
+  To get your data:
+  > curl {{config.SERVICE_URL}}/ss/{{key|urlencode}}
+
+  To post data:
+  > curl {{config.SERVICE_URL}}/ss/{{writekey|urlencode}}<span id="clprms"></span>
+
+</pre>
+                        </div>
+                     </div>
+                  </div>
+ 
+                 </p>
+                 <br>
+
+                <h3>Read and write keys:</h3>
+                <p>Your read key is: {{key}}</p>
+                <p>Your write key is: {{writekey}}</p>
+                <p>Generally you should only expose one of these keys in your HTML, and keep the other one secret. If you need to revoke access to this spreadsheet, you can <a href="" class="delss">delete these keys</a>.
+                <br><br>
+
+            </div>
+      </div>
+
+  </div>
+
+
+  <div class="row section navtab-content" id="getstarted">
+
+      <div class="container block">
+            <div class="col-1-1">
+                <h3>Data preview:</h3>
+
+                <div id="gsdata" style="font-size:smaller"></div>
+
+            </div>
+      </div>
+
+  </div>
+  {% endif %}
+
+
+  <div class="row section navtab-content">
+
+      <div class="container block">
+            <div class="col-1-1">
+                <h3>All spreadsheets:</h3>
+                <table style="border:none; margin-bottom:20px; width:100%">
+                  {% for sheet in spreadsheets %}
+                    <tr id="{{sheet.key}}" style="padding-bottom:3px;">
+                      <td style="border:none; padding-right:5px; width:99%">{{sheet.title}}</td>
+                      <td style="border:none;padding-right:5px;white-space:nowrap;"><a href="{{config.SERVICE_URL}}/admin?key={{sheet.key}}">view</a></td>
+                      <td style="border:none;padding-right:5px;white-space:nowrap;"><a href="" class="delss">delete</a></td>
+                    </tr>
+                  {% else %}
+                    <tr><td style="border:none;">
+                      No Spreadsheets
+                    </td></tr>
+                  {% endfor %}
+
+                </table>
+
+                <form style="display:inline-block" method="GET" action="{{config.SERVICE_URL|safe}}/admin">
+                  <table style="border:none; width:100%">
+                  <tr><td style="border:none;width:99%">
+                  <input style="margin:0" type="text" name="url" placeholder="Your Google spreadsheet URL" />
+                  </td><td style="border:none;white-space:nowrap;">
+                  <button type="submit" style="position:relative; padding: 0.7em;"><!--<i style="font-size:larger; position:absolute; top:9px" class="ion-social-googleplus"></i>&nbsp;--><span style="display:inline-block;">Add&nbsp;Spreadsheet</span></button>
+                  </td></tr>
+                  </table>
+                  </form>
+
+
+            </div>
+
+      </div>
+
+  </div>
+
+
+  <div class="row section grey">
+
+      <div class="container narrow block">
+          <div class="col-1-2">
+            <p>{{config.SERVICE_NAME}} is a tool made by <a href="http://brace.io">Brace.io</a>. To contact us send an email to <a href="mailto:{{config.CONTACT_EMAIL}}">{{config.CONTACT_EMAIL}}</a> or use the form on the right.</p>
+          </div>
+          <div class="col-1-2">
+            <form method="POST" action="{{config.FORMS_API}}/{{config.CONTACT_EMAIL}}">
+              <input type="email" name="_replyto" placeholder="Your email" />
+              <textarea name="message" rows="5"></textarea>
+              <button type="submit">Send</button>
+            </form>
+          </div>
+      </div>
+
+  </div>
+        
+
+  {% if key %}
+  <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/mustache.js/0.8.1/mustache.min.js"></script>
+  <script type="text/javascript">
+    $.get("{{config.API_ROOT}}/{{key}}", function(data) {
+      {% raw %}
+      var main_tmpl = "  <table>\n    ";
+      for (var h in data.headers) {
+        main_tmpl += "<th>" + data.headers[h] + "</th> ";
+      }      
+      main_tmpl += "\n    {{#rows}}\n      <tr>\n";
+      for (var h in data.headers) {
+        main_tmpl += "        <td>{{" + data.headers[h] + "}}</td>\n";
+      }
+      main_tmpl += "      </tr>\n    {{/rows}}\n  </table>\n";
+      {% endraw %}
+
+      var form_html = "<form action=\"{{config.API_ROOT}}/{{writekey}}\" method=\"POST\">\n";
+      for (var h in data.headers) {
+        form_html += "  <input type=\"text\" name=\""+data.headers[h]+"\" placeholder=\""+data.headers[h]+"\">\n"
+      }
+      form_html += "  <input type=\"submit\">\n</form>"
+
+      var curl_html = "";
+      for (var h in data.headers) {
+        curl_html += " \\\n         -F '"+data.headers[h]+"'=''"
+      }
+
+      var jqry_html = "";
+      for (var h in data.headers) {
+        jqry_html += "    \""+data.headers[h]+"\": \"\", \n"
+      }
+
+      var scpt = '<script src="{{config.SERVICE_URL}}/ss/{{key}}.js"><\/script>\n'
+      scpt += "<script type=\"x-data-template\">\n"+main_tmpl+"<\/script>\n";
+
+
+      $("#querycode").text(scpt)
+      $("#postcode").text(form_html)
+      var rendered = Mustache.render(main_tmpl, data)
+      $("#gsdata").html(rendered)
+      $("#clprms").html(curl_html)
+      $("#jqprms").html(jqry_html)
+
+      // $(".tabbed-content").equalHeights();
+
+
+    })
+  </script>
+  {% endif %}
+
+</body>
+</html>

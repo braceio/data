@@ -1,0 +1,247 @@
+<!doctype html>
+<html lang="en">
+<head>
+
+  <title>Use Google Spreadsheets as your CMS | {{config.SERVICE_NAME}}</title>
+  
+  <link rel="stylesheet" href="/static/css/main.css" />
+
+  <script type="text/javascript" src="//use.typekit.net/htc4dlo.js"></script>
+  <script type="text/javascript">try{Typekit.load();}catch(e){}</script>
+
+  <meta name="viewport" content="initial-scale=1">
+
+  <link rel="icon" type="image/png" href="{{config.SERVICE_URL}}/favicon.ico">
+
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+  <script src="/static/js/jquery.equalheights.min.js"></script>
+
+</head>
+<body> 
+  
+<script>
+var currentTab = 0; // Set to a different number to start on a different tab.
+var numTabs; // These two variables are set on document ready.
+
+function openTab(clickedTab) {
+   var thisTab = $(".tabbed-box .tabs a").index(clickedTab);
+   $(".tabbed-box .tabs li a").removeClass("active");
+   $(".tabbed-box .tabs li a:eq("+thisTab+")").addClass("active");
+   $(".tabbed-box .tabbed-content").hide();
+   $(".tabbed-box .tabbed-content:eq("+thisTab+")").show();
+   currentTab = thisTab;
+}
+
+$(document).ready(function() {
+   $(".tabbed-content").equalHeights();
+   numTabs = $(".tabbed-box .tabs li a").length;
+   $(".tabbed-box .tabs li a").click(function() { 
+      openTab($(this)); return false; 
+   });
+  
+   $(".tabbed-box .tabs li a:eq("+currentTab+")").click()  
+});
+</script>
+
+  <div class="login" style="float:right; padding:10px">
+    {% if current_user.is_anonymous() %}
+      <a href="{{config.SERVICE_URL|safe}}/admin">login</a>
+    {% else %}
+      <a href="{{config.SERVICE_URL|safe}}/admin">My spreadsheets</a>&nbsp;
+      <a href="{{config.SERVICE_URL|safe}}/auth/logout">logout</a>
+    {% endif %}
+  </div>
+
+  <div class="row section" id="header">
+        <div class="container" id="title">
+            <div class="col-1-1">
+                <img src="/static/img/logo.png" alt="" class="center animate dropIn">
+                <h1 class="center"><span class="caps">{{config.SERVICE_NAME}}</span> <small>by <a href="http://brace.io" style="display: inline-block; font-style: none; cursor: pointer; color:#aaa; margin-bottom: -10px;">Brace</a></small></h1>
+                
+            </div>
+        </div>
+      <div class="container center">
+          <h1 style="font-weight: 900;">Use Google Spreadsheets as your CMS</h1>
+          <h3 class="light">Display your spreadsheet data however you like<br>right on your static site.</h3>
+          <form style="display:inline-block" method="GET" action="{{config.SERVICE_URL|safe}}/admin">
+            <table style="border:none">
+              <tr><td style="border:none;width:400px">
+            <input style="margin:0" type="text" name="url" placeholder="Your Google spreadsheet URL" />
+              </td><td style="border:none">
+            <button type="submit" style="position:relative; padding: 0.7em;"><!--<i style="font-size:larger; position:absolute; top:9px" class="ion-social-googleplus"></i>&nbsp;--><span style="display:inline-block;">Get&nbsp;Started</span></button>
+              </td></tr>
+            </table>
+            <div style="font-size: small; float:right">with Google <i class="ion-social-googleplus" style="font-size:1.3em"></i></div>
+          </form>
+
+          <!--
+          <div class="col-1-2">
+            <h1 style="font-weight: 900;">The Missing API for <br/>Google Spreadsheets</h1>
+            <h3 class="light">Turn your Google Spreadsheet into a <br/>simple JSON API</h3>
+            <form method="GET" action="//{{config.API_ROOT}}/sheet">
+              <input type="text" name="url" placeholder="Your Google Spreadsheet URL" />
+              <button type="submit">Login to Get Started</button>
+            </form>
+          </div>
+
+          <div class="col-1-2">
+              <p>Example:</p>
+              <p class="card code" style="font-size: small">
+                  $.get("<span class="tooltip hint--top" data-hint="Use our CORS-compatible URL"><span class="attr">{{config.API_ROOT}}</span>/</span><span class="tooltip hint--top" data-hint="User your spreadsheet's ID"><span class="attr">GOOGLE_SPREADSHEET_KEY</span></span>?<br />
+                  &nbsp;&nbsp;&nbsp;&nbsp;<span class="attr"><span class="tooltip hint--top" data-hint="Apply limits for pagination">limit=2</span></span>&<span class="attr"><span class="tooltip hint--top" data-hint="Skip entries for pagination">skip=100</span></span>&<span class="attr"><span class="tooltip hint--top" data-hint="Sort by columns">sort=city</span></span>");
+              </p> 
+              <p>Result:</p>
+              <p class="card code" style="font-size: small">
+                  { "entries": [<br/>
+                  &nbsp;&nbsp;&nbsp;&nbsp;{"city": "Argentina", "population": "22342"}, <br>
+                  &nbsp;&nbsp;&nbsp;&nbsp;{"city": "California", "population": "235"}<br/>
+                  ]}
+              </p> 
+          </div>
+        -->
+      </div>
+  </div>
+
+  <div class="row section" id="getstarted">
+
+      <div class="container narrow block">
+          <div class="col-1-1">
+              <h2>How it works</h2>
+
+              <p>Connect your Google Spreadsheet to {{config.SERVICE_NAME}}. Then you can use <a href="http://mustache.github.io">mustache</a> templates to display your data, or post new data with a form.</p>
+
+              <h3>Easily display spreadsheet data:</h3>
+              <p class="card code" style="font-size:small"> 
+                &lt;script src="<span class="tooltip hint--top" data-hint="Include our script"><span class="attr">{{config.API_ROOT}}/READ_KEY.js</span></span>"&gt;&lt;/script&gt;<br><br>
+                <!-- &lt;!-- ... --&gt;<br><br> -->
+                &lt;script type="<span class="tooltip hint--top" data-hint="Data templates will be rendered using your data"><span class="attr">x-data-template</span></span>"&gt;<br>
+                {% raw %}
+                &nbsp; &lt;ul&gt;<br>
+                &nbsp;&nbsp;&nbsp; <span class="tooltip hint--top" data-hint="For every row in the spreadsheet..."><span class="attr">{{#rows}}</span></span><br>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;li&gt;<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <span class="tooltip hint--top" data-hint="...display the price column"><span class="attr">{{Price}}, </span></span><br>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; {{Title}}, <br>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; {{Quantity}}<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;/li&gt;<br>
+                &nbsp;&nbsp;&nbsp; {{/rows}}<br>
+                &nbsp; &lt;/ul&gt;<br>
+                {% endraw %}
+                &lt;/script&gt;
+              </p>
+
+
+
+              <!--
+              <p class="card code" style="font-size: small">
+                  $.get("{{config.API_ROOT}}/<span class="tooltip hint--top" data-hint="We give you a read-only key"><span class="attr">READONLY_KEY</span></span>?<br />
+                  &nbsp;&nbsp;&nbsp;&nbsp;<span class="attr"><span class="tooltip hint--top" data-hint="Apply limits for pagination">limit=2</span></span>&<span class="attr"><span class="tooltip hint--top" data-hint="Skip entries for pagination">skip=100</span></span>&<span class="attr"><span class="tooltip hint--top" data-hint="Sort by columns">sort=city</span></span>");
+              </p> 
+
+              <p>Result:</p>
+              <p class="card code" style="font-size: small">
+                  { "entries": [<br/>
+                  &nbsp;&nbsp;&nbsp;&nbsp;{"city": "Argentina", "population": "22342"}, <br>
+                  &nbsp;&nbsp;&nbsp;&nbsp;{"city": "California", "population": "235"}<br/>
+                  ]}
+              </p> 
+              -->
+
+              <h3>Post new entries:</h3>
+
+              <p class="card code" style="font-size: small">
+                  &ltform <span class="tooltip hint--top" data-hint="Use our URL as the form's action">action="<span class="attr">{{config.API_ROOT}}/WRITE_KEY</span>"</span> method="POST"&gt;<br />
+                  &nbsp;&nbsp;&nbsp;&nbsp;&lt;input type="<span class="attr">text</span>" <span class="tooltip hint--top" data-hint="name should match the column header">name="<span class="attr">Price</span>"</span>&gt;<br />
+                  &nbsp;&nbsp;&nbsp;&nbsp;&lt;input type="text" name="Title"&gt;<br />
+                  &nbsp;&nbsp;&nbsp;&nbsp;&lt;input type="text" name="Quantity"&gt;<br />
+                  &nbsp;&nbsp;&nbsp;&nbsp;<span class="tooltip hint--bottom" data-hint="When user submits, we'll add it to your spreadsheet">&ltinput type="<span class="attr">submit</span>" value="<span class="attr">Send</span>"&gt;</span><br />
+                  &lt/form&gt;
+              </p>
+
+              <!--
+              <p class="card code" style="font-size: small">
+                  $.post("{{config.API_ROOT}}/<span class="tooltip hint--top" data-hint="A different key for writes"><span class="attr">WRITE_KEY</span></span>",<br/>
+                  &nbsp;&nbsp;&nbsp;&nbsp;<span class="attr"><span class="tooltip hint--top" data-hint="A new row of data">{column1:"value", column2:"value"}</span></span>);
+              </p> 
+            -->
+
+          </div>
+      </div>
+
+
+
+      <div class="container narrow block">
+          <div class="col-1-1">
+          <h3>Try for yourself!</h3>
+
+          <form style="display:inline-block" method="GET" action="{{config.SERVICE_URL|safe}}/admin">
+            <table style="border:none">
+              <tr><td style="border:none;width:400px">
+            <input style="margin:0" type="text" name="url" placeholder="Your Google spreadsheet URL" />
+              </td><td style="border:none">
+            <button type="submit" style="position:relative; padding: 0.7em;"><!--<i style="font-size:larger; position:absolute; top:9px" class="ion-social-googleplus"></i>&nbsp;--><span style="display:inline-block;">Get&nbsp;Started</span></button>
+              </td></tr>
+            </table>
+            <div style="font-size: small; float:left">No spreadsheet? <a href="https://drive.google.com/previewtemplate?id=0AoFkkLP2MB8kdFd4bEJ5VzR2RVdBQkVuSW91WE1zZkE&;mode=public&;pli=1#" target="_blank">Use this template</a>.</div>
+            </form>
+          </div>
+      </div>
+
+  </div>
+
+  <div class="row section grey">
+
+      <div class="container block">
+          <div class="col-1-1"><h2>Some questions you might have:</h2></div>
+      </div>
+  
+      <div class="container block">
+            <div class="col-1-2">
+                <div class="card">
+                    <h4>Who are you guys?</h4>
+                    <p>We're the same folks who make <a href="http://brace.io">Brace.io</a>, the simple way to host websites. {{config.SERVICE_NAME}} is a side project that solves a problem many of Brace.io users seem to face: incorporating dynamic data into otherwise static HTML pages.</p>
+                </div>
+            </div>
+            <div class="col-1-2">
+                <div class="card">
+                    <h4>What about privacy?</h4>
+                    <p>We don't store the contents of your spreadsheet. Instead we generate two access keys that link our APIs to your spreadsheet, one for reading and one for writing. You can delete these keys at any time to revoke access.</p>
+                </div>
+            </div>
+      </div>
+
+      <div class="container block">
+            <div class="col-1-2">
+                <div class="card">
+                    <h4>How much does it cost?</h4>
+                    <p>{{config.SERVICE_NAME}} is free for 1000 API calls per spreadsheet each month. If you need more, please reach out.</p>
+                </div>
+            </div>
+            <div class="col-1-2">
+                <div class="card">
+                    <h4>Are there any limits?</h4>
+                    <p>Yep, for now we cap API calls to 1000 per spreadsheet for each month. If you need more, please reach out to {{config.CONTACT_EMAIL}}.</p>
+                </div>
+            </div>
+      </div>
+
+  </div>
+
+  <div class="row section">
+
+      <div class="container narrow block">
+          <div class="col-1-2">
+            <p>{{config.SERVICE_NAME}} is a tool made by <a href="http://brace.io">Brace.io</a>. To contact us send an email to <a href="mailto:{{config.CONTACT_EMAIL}}">{{config.CONTACT_EMAIL}}</a> or use the form on the right.</p>
+          </div>
+          <div class="col-1-2">
+            <form method="POST" action="{{config.FORMS_API}}/{{config.CONTACT_EMAIL}}">
+              <input type="email" name="_replyto" placeholder="Your email" />
+              <textarea name="message" rows="5"></textarea>
+              <button type="submit">Send</button>
+            </form>
+          </div>
+      </div>
+
+  </div>
+
+</body>
+</html>

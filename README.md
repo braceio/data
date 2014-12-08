@@ -55,4 +55,4 @@ Yep, for now we cap API calls to 1000 per spreadsheet for each month. If you nee
 
 --------
 
-Brace Data is a tool made by Brace.io. To contact us send an email to team@brace.io or use the form on the right.
+Brace Data is a tool made by Brace.io. To contact us send an email to team@brace.io.

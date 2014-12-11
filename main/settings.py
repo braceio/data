@@ -15,9 +15,11 @@ settings_vars = {
     'DEBUG': _is_true,
     'SECRET_KEY': _default(),
     'SERVICE_NAME': _default('Data'),
-    'SERVICE_URL': _default('http://myapp.com'),
-    'CONTACT_EMAIL': _default('team@myapp.com'),
-    'API_ROOT': _default('//api.myapp.com'),
+    'SERVICE_URL': _default('http://example.com'),
+    'CONTACT_EMAIL': _default('team@example.com'),
+    'API_ROOT': _default('//example.com'),
+
+    # external APIs
     'GOOGLE_CLIENT_ID': _default(),
     'GOOGLE_CLIENT_SECRET': _default(),
     'MONGO_HOST': _default('localhost:27017'),
@@ -27,7 +29,7 @@ settings_vars = {
     'REDIS_HOST': _default('localhost'),
     'REDIS_PORT': _default('6379'),
     'REDIS_PASS': _default(None),
-    'FORMS_API': _default('//forms.brace.io')
+    'FORMS_API': _default('//forms.brace.io') # for collecting feedback on the landing page
 }
 
 for k, v in settings_vars.items():

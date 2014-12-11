@@ -55,4 +55,54 @@ Yep, for now we cap API calls to 1000 per spreadsheet for each month. If you nee
 
 --------
 
-Brace Data is a tool made by Brace.io. To contact us send an email to team@brace.io.
+Running your own copy of Brace Data 
+------------------------------------
+
+### Running on localhost
+
+You'll need python 2.7 and should [install pip](https://pip.pypa.io/en/latest/installing.html), and create a [virtual environment](http://docs.python-guide.org/en/latest/dev/virtualenvs/) for the server. 
+
+Once your environment is setup, clone the source and cd into the root of the Brace Data repository. Then run:
+
+    pip install -r requirements.txt
+
+then
+
+    python manage.py runserver
+
+
+### Running on heroku
+
+You'll need python 2.7 and should [install pip](https://pip.pypa.io/en/latest/installing.html), and create a [virtual environment](http://docs.python-guide.org/en/latest/dev/virtualenvs/) for the server. 
+
+You also will need to install the [heroku toolbelt](https://toolbelt.heroku.com/).
+
+Once your environment is setup, clone the source and cd into the root of the Brace Data repository. Then run:
+
+    heroku app:create [your project name]
+
+then
+
+    git push heroku
+
+Your new project will be running at [your project name].herokuapp.com.
+
+
+### Dependencies
+
+Brace Data requires Redis and MongoDB. If you're deploying to heroku you can get an addons, such as redistogo and mongohq. To install redistogo and mongohq into your project just run the commands:
+
+    heroku addons:add redistogo
+    heroku addons:add mongohq
+
+
+Brace Data also requires a google developer credentials with the following APIs enabled:
+
+    Google Cloud Storage JSON API
+    Google+ API
+
+
+### Configuring Brace Data
+
+Take a look at the `main/settings.py` file for a list of environment variables that should be set in order for Data to work correctly.
+

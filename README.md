@@ -1,3 +1,4 @@
+**NOTE:** This project is not being actively maintained. Please see the fork at [github.com/asm-products/gridspree](http://github.com/asm-products/gridspree) for further development, and join the discussion at [assembly.com/gridspree](http://assembly.com/gridspree).
 
 DATA by Brace
 -------------
